@@ -1,0 +1,225 @@
+﻿@model PharmacyManagement.Models.ViewModels.Admin.AdminDashboardViewModel
+
+@{
+    ViewData["Title"] = "Admin Dashboard";
+    var stockList = Model?.SalesStocks ?? new List<PharmacyManagement.Models.ViewModels.Stock.AdminSalesStockViewModel>();
+    var customerList = Model?.Customers ?? new List<PharmacyManagement.Models.ViewModels.Admin.CustomerListViewModel>();
+}
+
+<!-- Page Header / Stats Row -->
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Dashboard</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item active">Dashboard Overview</li>
+    </ol>
+
+    <!-- Top Summary Card (Placed below overview, smaller and left-aligned) -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-4 col-sm-6">
+            <div class="card bg-primary text-white shadow-sm rounded-4">
+                <div class="card-body py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="small text-white text-uppercase fw-semibold" style="font-size: 0.75rem;">Total Customers</div>
+                            <div class="fs-4 fw-bold text-white mb-0">@Model?.TotalCustomers</div>
+                        </div>
+                        <div class="text-end">
+                            <i class="fas fa-users fa-lg text-white mb-1"></i>
+                            <div>
+                                <button type="button" class="btn btn-light btn-sm fw-semibold text-primary shadow-sm rounded-pill px-2 py-0" style="font-size: 0.75rem;" data-bs-toggle="modal" data-bs-target="#customersModal">
+                                    <i class="fas fa-external-link-alt me-1"></i> View List
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sales & Stock Table Section (Main Dashboard View) -->
+    <div class="card mb-4 shadow-sm rounded-4 border-0">
+        <div class="card-header bg-white py-3 rounded-top-4">
+            <i class="fas fa-table me-1 text-primary"></i>
+            <span class="fw-bold text-dark">Medicine Sales & Stock Status</span>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table align-middle table-hover">
+                    <thead class="table-light text-uppercase text-muted" style="font-size: 11px;">
+                        <tr>
+                            <th class="py-3 px-3">Medicine Name</th>
+                            <th class="py-3 px-3">Units Sold</th>
+                            <th class="py-3 px-3">Units Left</th>
+                            <th class="py-3 px-3">Buy Price</th>
+                            <th class="py-3 px-3">Sell Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (stockList.Any())
+                        {
+                            @foreach (var item in stockList)
+                            {
+                                <tr>
+                                    <td class="fw-bold text-dark px-3">@item.MedicineName</td>
+                                    <td class="px-3 text-muted">@item.UnitsSold</td>
+                                    <td class="px-3 text-muted">@item.UnitsLeft</td>
+                                    <td class="px-3 text-muted">BDT @item.BuyPrice.ToString("N2")</td>
+                                    <td class="px-3 text-muted">BDT @item.SellPrice.ToString("N2")</td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center text-muted py-4">No stock/sales data found.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Floating Window / Modal for Registered Customers & Purchases (Enlarged and Spaced) -->
+<div class="modal fade" id="customersModal" tabindex="-1" aria-labelledby="customersModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen-lg-down modal-xl modal-dialog-scrollable">
+        <div class="modal-content shadow-lg rounded-4 border-0">
+            <div class="modal-header bg-primary text-white rounded-top-4 py-3 px-4">
+                <h5 class="modal-title text-white fw-bold fs-5" id="customersModalLabel">
+                    <i class="fas fa-users me-2"></i> Registered Customers & Purchases
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body bg-light p-4">
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table align-middle table-hover mb-0" style="font-size: 0.95rem;">
+                                <thead class="table-light text-uppercase text-muted" style="font-size: 11px; letter-spacing: 0.5px;">
+                                    <tr>
+                                        <th class="py-3 px-3" style="width: 18%;">Customer Name</th>
+                                        <th class="py-3 px-3" style="width: 22%;">Email</th>
+                                        <th class="py-3 px-3" style="width: 15%;">Phone</th>
+                                        <th class="py-3 px-3" style="width: 20%;">Address</th>
+                                        <th class="py-3 px-3 text-center" style="width: 10%;">Medicine Purchases<br /></th>
+                                        <th class="py-3 px-3 text-center" style="width: 5%;">History</th>
+                                        <th class="py-3 px-3 text-center" style="width: 5%;">Delete</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (customerList.Any())
+                                    {
+                                        @foreach (var cust in customerList)
+                                        {
+                                            <tr>
+                                                <td class="fw-bold text-dark px-3 py-3">@cust.Name</td>
+                                                <td class="px-3 py-3 text-muted">@cust.Email</td>
+                                                <td class="px-3 py-3 text-muted">@cust.Phone</td>
+                                                <td class="px-3 py-3 text-muted">@cust.Address</td>
+                                                <td class="px-3 py-3 fw-semibold text-dark text-center">@cust.TotalMedicinesBought</td>
+
+                                                <!-- History Column Button -->
+                                                <td class="px-3 py-3 text-center">
+                                                    <button type="button" class="btn btn-outline-primary btn-sm rounded-pill px-3 py-2" onclick="loadCustomerHistory(@cust.CustomerId)">
+                                                        <i class="fas fa-history me-1"></i> History
+                                                    </button>
+                                                </td>
+
+                                                <!-- Delete Button -->
+                                                <td class="px-3 py-3 text-center">
+                                                    <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-3 py-2 delete-btn"
+                                                            data-id="@cust.CustomerId"
+                                                            data-name="@cust.Name">
+                                                        <i class="fas fa-trash-alt me-1"></i> Delete
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="7" class="text-center text-muted py-5 fs-6">No customer data found.</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer bg-white rounded-bottom-4 py-3 px-4">
+                <button type="button" class="btn btn-secondary btn-sm rounded-pill px-4 py-2" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Secondary Modal for Customer Purchase History -->
+<div class="modal fade" id="customerHistoryModal" tabindex="-1" aria-labelledby="customerHistoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content shadow rounded-4 border-0">
+            <div class="modal-header bg-secondary text-white rounded-top-4">
+                <h5 class="modal-title text-white fw-bold" id="customerHistoryModalLabel">
+                    <i class="fas fa-history me-2"></i> Customer Purchase History
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body bg-light" id="historyModalBody">
+                <!-- Dynamically loaded content goes here -->
+            </div>
+            <div class="modal-footer bg-white rounded-bottom-4">
+                <button type="button" class="btn btn-secondary btn-sm rounded-pill px-4" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Custom Confirmation Modal for Deleting Customer -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow rounded-4 border-0">
+            <div class="modal-header bg-danger text-white rounded-top-4">
+                <h5 class="modal-title text-white fw-bold" id="deleteConfirmModalLabel">
+                    <i class="fas fa-exclamation-triangle me-2"></i> Confirm Delete
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body bg-light py-4 text-center">
+                <p class="fs-6 text-dark mb-1">Are you sure you want to delete customer <strong id="deleteCustomerName"></strong>?</p>
+                <p class="text-muted small mb-0">This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer bg-white rounded-bottom-4 justify-content-center">
+                <button type="button" class="btn btn-secondary btn-sm rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
+                <form id="deleteCustomerForm" method="post" class="d-inline">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger btn-sm rounded-pill px-4">Yes, Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function loadCustomerHistory(customerId) {
+            $.get('/Admin/GetCustomerPurchaseHistory?id=' + customerId, function(data) {
+                $('#historyModalBody').html(data);
+                $('#customerHistoryModal').modal('show');
+            }).fail(function() {
+                alert('Failed to load purchase history.');
+            });
+        }
+
+        $(document).on('click', '.delete-btn', function() {
+            var customerId = $(this).data('id');
+            var customerName = $(this).data('name');
+
+            $('#deleteCustomerName').text(customerName);
+            $('#deleteCustomerForm').attr('action', '/Admin/DeleteCustomer/' + customerId);
+            $('#deleteConfirmModal').modal('show');
+        });
+    </script>
+}

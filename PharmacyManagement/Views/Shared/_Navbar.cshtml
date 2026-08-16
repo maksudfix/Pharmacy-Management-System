@@ -1,0 +1,80 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    // Fetch the current user to access custom properties like FullName or UserName
+    ApplicationUser? currentUser = null;
+    if (SignInManager.IsSignedIn(User))
+    {
+        currentUser = await UserManager.GetUserAsync(User);
+    }
+}
+
+<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+    <div class="container-fluid">
+        <a class="navbar-brand fw-bold text-primary" asp-controller="Home" asp-action="Index">Trex Medicine</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+            <ul class="navbar-nav flex-grow-1">
+
+                @if (SignInManager.IsSignedIn(User))
+                {
+                    bool isAdmin = currentUser != null && await UserManager.IsInRoleAsync(currentUser, "Admin");
+
+                    if (isAdmin)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link text-dark fw-bold text-danger" asp-controller="Admin" asp-action="Dashboard">Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Admin" asp-action="Medicines">Medicines</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Admin" asp-action="Stocks">Stocks</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Admin" asp-action="Prescriptions">Prescriptions</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Customer" asp-action="MyPurchases">My Purchases</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Customer" asp-action="MyPrescriptions">My Prescriptions</a>
+                        </li>
+                    }
+                }
+            </ul>
+
+            <ul class="navbar-nav">
+                @if (SignInManager.IsSignedIn(User))
+                {
+                    <li class="nav-item d-flex align-items-center me-3">
+                        @* Replace currentUser.FullName with whatever property holds the user's actual name *@
+                        <span class="navbar-text text-muted small">Hello, @(currentUser?.FullName ?? User.Identity?.Name)</span>
+                    </li>
+                    <li class="nav-item">
+                        <form class="form-inline" asp-controller="Auth" asp-action="Logout" method="post">
+                            <button type="submit" class="nav-link btn btn-link text-dark">Logout</button>
+                        </form>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-controller="Auth" asp-action="Login"></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-controller="Auth" asp-action="Register"></a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</nav>

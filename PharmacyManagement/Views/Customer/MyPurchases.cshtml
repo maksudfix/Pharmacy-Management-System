@@ -1,0 +1,170 @@
+﻿@model IEnumerable<PharmacyManagement.Models.ViewModels.Purchase.PurchaseViewModel>
+
+@{
+    ViewData["Title"] = "My Purchases";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold mb-0">My Purchases</h2>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-outline-primary rounded-pill">Continue Shopping</a>
+</div>
+
+<div class="card shadow-sm border-0 rounded-4">
+    <div class="card-body p-4">
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Total Amount</th>
+                        <th>Payment Method</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var purchase in Model)
+                        {
+                            <tr>
+                                <td class="fw-bold">#@purchase.PurchaseId</td>
+                                <td>BDT @purchase.TotalAmount.ToString("0.00")</td>
+                                <td>@purchase.PaymentMethod</td>
+                                <td>
+                                    @if (purchase.Status?.Equals("Completed", StringComparison.OrdinalIgnoreCase) == true)
+                                    {
+                                        <span class="badge bg-success">Completed</span>
+                                    }
+                                    else
+                                    {
+                                        <form asp-action="Buy" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="purchaseId" value="@purchase.PurchaseId" />
+                                            <button type="submit" class="btn btn-sm btn-primary rounded-pill px-3 shadow-sm">
+                                                <i class="bi bi-cart-check-fill me-1"></i> Confirm Purchase
+                                            </button>
+                                        </form>
+                                    }
+                                </td>
+                                <td>@purchase.PurchaseDate.ToString("yyyy-MM-dd HH:mm")</td>
+                                <td class="text-end">
+                                    <button type="button" class="btn btn-sm btn-outline-info rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#memoModal-@purchase.PurchaseId">
+                                        <i class="bi bi-receipt me-1"></i> View Memo
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-4">No purchases found.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Render Modals Outside the Table to Prevent Layout Mess & Overlap -->
+@if (Model != null && Model.Any())
+{
+    @foreach (var purchase in Model)
+    {
+        <div class="modal fade" id="memoModal-@purchase.PurchaseId" tabindex="-1" aria-labelledby="memoModalLabel-@purchase.PurchaseId" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content rounded-4 border-0 shadow">
+                    <div class="modal-header bg-light">
+                        <h5 class="modal-title fw-bold" id="memoModalLabel-@purchase.PurchaseId">Order Memo / Receipt #@purchase.PurchaseId</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-5 bg-white" id="printableArea-@purchase.PurchaseId">
+                        <div class="text-center mb-4">
+                            <h3 class="fw-bold text-primary">Trex Medicine</h3>
+                            <p class="text-muted mb-0">Purchase Receipt</p>
+                        </div>
+                        <hr />
+                        <div class="row mb-4">
+                            <div class="col-sm-6">
+                                <p class="mb-1"><strong>Order ID:</strong> #@purchase.PurchaseId</p>
+                                <p class="mb-1"><strong>Date:</strong> @purchase.PurchaseDate.ToString("yyyy-MM-dd HH:mm")</p>
+                            </div>
+                            <div class="col-sm-6 text-sm-end">
+                                <p class="mb-1"><strong>Payment Method:</strong> @purchase.PaymentMethod</p>
+                                <p class="mb-1"><strong>Status:</strong> <span class="badge @(purchase.Status == "Completed" ? "bg-success" : "bg-warning text-dark")">@purchase.Status</span></p>
+                            </div>
+                        </div>
+                        <div class="table-responsive mb-4">
+                            <table class="table table-bordered align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Description</th>
+                                        <th class="text-end">Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Pharmacy Order Purchase (#@purchase.PurchaseId)</td>
+                                        <td class="text-end">BDT @purchase.TotalAmount.ToString("0.00")</td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th class="text-end">Grand Total:</th>
+                                        <th class="text-end text-success">BDT @purchase.TotalAmount.ToString("0.00")</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        <div class="text-center text-muted small mt-5">
+                            <p class="mb-0">Thank you for your purchase! For any inquiries, please contact support.</p>
+                        </div>
+                    </div>
+                    <div class="modal-footer bg-light justify-content-between">
+                        <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Close</button>
+                        <div>
+                            <button type="button" class="btn btn-outline-success rounded-pill px-3 me-2" onclick="downloadImage('@purchase.PurchaseId')">
+                                <i class="bi bi-file-earmark-image me-1"></i> Save as Image
+                            </button>
+                            <button type="button" class="btn btn-primary rounded-pill px-4" onclick="printModal('@purchase.PurchaseId')">
+                                <i class="bi bi-printer me-1"></i> Print / Save as PDF
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        function printModal(purchaseId) {
+            const printContent = document.getElementById("printableArea-" + purchaseId).innerHTML;
+            const originalBody = document.body.innerHTML;
+
+            document.body.innerHTML = `
+                        <div style="font-family: Arial, sans-serif; padding: 30px; max-width: 800px; margin: auto; background: white;">
+                            ${printContent}
+                        </div>
+                    `;
+            window.print();
+            document.body.innerHTML = originalBody;
+            window.location.reload();
+        }
+
+        function downloadImage(purchaseId) {
+            const element = document.getElementById("printableArea-" + purchaseId);
+            html2canvas(element, { scale: 2 }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `Order-Memo-BDT {purchaseId}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        }
+    </script>
+}

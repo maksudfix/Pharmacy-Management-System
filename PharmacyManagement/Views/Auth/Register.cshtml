@@ -1,0 +1,107 @@
+﻿@model PharmacyManagement.Models.ViewModels.Customer.CustomerRegisterViewModel
+
+@{
+    ViewData["Title"] = "Customer Registration";
+}
+
+<div class="row justify-content-center my-5">
+    <div class="col-md-7">
+        <div class="card shadow border-0 rounded-4">
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <h2 class="fw-bold text-primary">Create an Account</h2>
+                    <p class="text-muted">Join Our Pharmacy Platform</p>
+                </div>
+
+                <form asp-controller="Auth" asp-action="Register" method="post">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <div class="form-floating">
+                                <input asp-for="Name" class="form-control" placeholder="Full Name" />
+                                <label asp-for="Name">Full Name</label>
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <input asp-for="Age" class="form-control" placeholder="Age" />
+                                <label asp-for="Age">Age</label>
+                                <span asp-validation-for="Age" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <select asp-for="Gender" class="form-select">
+                                    <option value="">-- Select Gender --</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                                <label asp-for="Gender">Gender</label>
+                                <span asp-validation-for="Gender" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <input asp-for="Phone" class="form-control" placeholder="Phone" />
+                                <label asp-for="Phone">Phone Number</label>
+                                <span asp-validation-for="Phone" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <input asp-for="Email" class="form-control" placeholder="name@example.com" />
+                                <label asp-for="Email">Email Address</label>
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <textarea asp-for="Address" class="form-control" placeholder="Address" style="height: 80px;"></textarea>
+                        <label asp-for="Address">Delivery Address</label>
+                        <span asp-validation-for="Address" class="text-danger"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <input asp-for="Password" class="form-control" placeholder="Password" />
+                                <label asp-for="Password">Password</label>
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <input asp-for="ConfirmPassword" class="form-control" placeholder="Confirm Password" />
+                                <label asp-for="ConfirmPassword">Confirm Password</label>
+                                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Centered Slim Pill Button -->
+                    <div class="d-grid gap-2 d-md-flex justify-content-center mb-3 mt-2">
+                        <button type="submit" class="btn btn-primary rounded-pill px-4 py-2 shadow-sm">Register Account</button>
+                    </div>
+
+                    <div class="text-center">
+                        <p class="text-muted">Already have an account? <a asp-controller="Auth" asp-action="Login" class="text-decoration-none fw-bold">Log In</a></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,51 @@
+﻿@model PharmacyManagement.Models.ViewModels.Stock.StockCreateEditViewModel
+
+@{
+    ViewData["Title"] = "Add Stock";
+}
+
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Add Stock</h1>
+    <div class="card mb-4">
+        <div class="card-body">
+            <form asp-action="AddStock">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="mb-3">
+                    <label asp-for="MedicineId" class="form-label">Medicine</label>
+                    <select asp-for="MedicineId" asp-items="Model.Medicines" class="form-control">
+                        <option value="">-- Select Medicine --</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="BatchNumber" class="form-label"></label>
+                    <input asp-for="BatchNumber" class="form-control" />
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Quantity" class="form-label"></label>
+                    <input asp-for="Quantity" class="form-control" />
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="PurchasePrice" class="form-label"></label>
+                    <input asp-for="PurchasePrice" class="form-control" />
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="SellingPrice" class="form-label"></label>
+                    <input asp-for="SellingPrice" class="form-control" />
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="ExpiryDate" class="form-label"></label>
+                    <input asp-for="ExpiryDate" type="date" class="form-control" />
+                </div>
+
+                <button type="submit" class="btn btn-primary">Save Stock</button>
+                <a asp-action="Stocks" class="btn btn-secondary">Back to List</a>
+            </form>
+        </div>
+    </div>
+</div>

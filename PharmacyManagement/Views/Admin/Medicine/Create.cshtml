@@ -1,0 +1,96 @@
+﻿@model PharmacyManagement.Models.ViewModels.Medicine.MedicineCreateViewModel
+
+@{
+    ViewData["Title"] = "Add Medicine";
+}
+
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Add Medicine</h1>
+    <div class="card mb-4">
+        <div class="card-body">
+            <form asp-action="Create" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <!-- Name -->
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <!-- Generic Name -->
+                <div class="mb-3">
+                    <label asp-for="GenericName" class="form-label"></label>
+                    <input asp-for="GenericName" class="form-control" />
+                    <span asp-validation-for="GenericName" class="text-danger"></span>
+                </div>
+
+                <!-- Brand Name -->
+                <div class="mb-3">
+                    <label asp-for="BrandName" class="form-label"></label>
+                    <input asp-for="BrandName" class="form-control" />
+                    <span asp-validation-for="BrandName" class="text-danger"></span>
+                </div>
+
+                <!-- Category -->
+                <div class="mb-3">
+                    <label asp-for="CategoryId" class="form-label">Category</label>
+                    <select asp-for="CategoryId" asp-items="Model.Categories" class="form-control">
+                        <option value="">-- Select Category --</option>
+                    </select>
+                    <span asp-validation-for="CategoryId" class="text-danger"></span>
+                </div>
+
+                <!-- Dosage Form -->
+                <div class="mb-3">
+                    <label asp-for="DosageForm" class="form-label"></label>
+                    <input asp-for="DosageForm" class="form-control" placeholder="e.g., Tablet, Syrup, Capsule" />
+                    <span asp-validation-for="DosageForm" class="text-danger"></span>
+                </div>
+
+                <!-- Strength -->
+                <div class="mb-3">
+                    <label asp-for="Strength" class="form-label"></label>
+                    <input asp-for="Strength" class="form-control" placeholder="e.g., 500mg" />
+                    <span asp-validation-for="Strength" class="text-danger"></span>
+                </div>
+
+                <!-- Manufacturer -->
+                <div class="mb-3">
+                    <label asp-for="Manufacturer" class="form-label"></label>
+                    <input asp-for="Manufacturer" class="form-control" />
+                    <span asp-validation-for="Manufacturer" class="text-danger"></span>
+                </div>
+
+                <!-- Image File -->
+                <div class="mb-3">
+                    <label asp-for="ImageFile" class="form-label"></label>
+                    <input asp-for="ImageFile" type="file" class="form-control" />
+                    <span asp-validation-for="ImageFile" class="text-danger"></span>
+                </div>
+
+                <!-- Description -->
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label"></label>
+                    <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <!-- Is Prescription Required -->
+                <div class="mb-3 form-check">
+                    <input asp-for="IsPrescriptionRequired" class="form-check-input" />
+                    <label asp-for="IsPrescriptionRequired" class="form-check-label"></label>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a asp-action="Medicines" class="btn btn-secondary">Back to List</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,0 +1,130 @@
+﻿@model IEnumerable<PharmacyManagement.Models.ViewModels.Prescription.PrescriptionViewModel>
+
+@{
+    ViewData["Title"] = "Customer Prescriptions";
+}
+
+<h2 class="fw-bold mb-4">Customer Prescriptions</h2>
+
+<div class="card shadow-sm border-0 rounded-4">
+    <div class="card-body p-4">
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>Customer</th>
+                        <th>File</th>
+                        <th>Notes</th>
+                        <th>Status</th>
+                        <th>Uploaded At</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="fw-bold">@item.CustomerName</td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.FileUrl))
+                                    {
+                                        <!-- Trigger modal on the same page -->
+                                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#docModal-@item.PrescriptionId">
+                                            <i class="bi bi-file-earmark-text me-1"></i> View File
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">No File</span>
+                                    }
+                                </td>
+                                <td>@item.Notes</td>
+                                <td>
+                                    <span class="badge bg-info text-dark">@item.Status</span>
+                                </td>
+                                <td>@item.UploadedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                                <td class="text-end">
+                                    <!-- Normal Delete Button (Initially Visible) -->
+                                    <div id="delete-btn-container-@item.PrescriptionId" class="d-inline">
+                                        <button type="button" class="btn btn-sm btn-outline-danger rounded-pill" onclick="showConfirm(@item.PrescriptionId)">
+                                            Delete
+                                        </button>
+                                    </div>
+
+                                    <!-- Inline Confirmation Form (Initially Hidden) -->
+                                    <form id="confirm-form-@item.PrescriptionId" asp-controller="Admin" asp-action="DeletePrescription" asp-route-id="@item.PrescriptionId" method="post" class="d-none">
+                                        @Html.AntiForgeryToken()
+                                        <span class="text-danger small me-1">Are you sure?</span>
+                                        <button type="submit" class="btn btn-sm btn-danger rounded-pill px-2">Confirm</button>
+                                        <button type="button" class="btn btn-sm btn-secondary rounded-pill px-2" onclick="hideConfirm(@item.PrescriptionId)">Cancel</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-4">No prescriptions found.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Render Document Modals Outside the Table to Prevent Overlapping / Layout Mess -->
+@if (Model != null && Model.Any())
+{
+    @foreach (var item in Model)
+    {
+        @if (!string.IsNullOrEmpty(item.FileUrl))
+        {
+            <div class="modal fade" id="docModal-@item.PrescriptionId" tabindex="-1" aria-labelledby="docModalLabel-@item.PrescriptionId" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content rounded-4 border-0 shadow">
+                        <div class="modal-header bg-light">
+                            <h5 class="modal-title fw-bold" id="docModalLabel-@item.PrescriptionId">Prescription Document - @item.CustomerName</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body p-4 bg-white text-center">
+                            @if (item.FileUrl.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase))
+                            {
+                                <div class="ratio ratio-16x9">
+                                    <iframe src="@item.FileUrl" class="rounded-3 border" title="Prescription PDF"></iframe>
+                                </div>
+                            }
+                            else
+                            {
+                                <img src="@item.FileUrl" alt="Prescription Document" class="img-fluid rounded-3 shadow-sm" style="max-height: 500px; object-fit: contain;" />
+                            }
+                        </div>
+                        <div class="modal-footer bg-light justify-content-between">
+                            <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Close</button>
+                            <a href="@item.FileUrl" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary rounded-pill px-3">
+                                <i class="bi bi-box-arrow-up-right me-1"></i> Open in New Tab
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+}
+
+@section Scripts {
+    <script>
+        function showConfirm(id) {
+            document.getElementById('delete-btn-container-' + id).classList.add('d-none');
+            document.getElementById('confirm-form-' + id).classList.remove('d-none');
+        }
+
+        function hideConfirm(id) {
+            document.getElementById('confirm-form-' + id).classList.add('d-none');
+            document.getElementById('delete-btn-container-' + id).classList.remove('d-none');
+        }
+    </script>
+}

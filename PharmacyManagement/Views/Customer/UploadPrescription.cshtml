@@ -1,0 +1,37 @@
+﻿@model PharmacyManagement.Models.ViewModels.Prescription.PrescriptionUploadViewModel
+
+@{
+    ViewData["Title"] = "Upload Prescription";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow border-0 rounded-4">
+            <div class="card-body p-5">
+                <h2 class="fw-bold text-primary mb-4">Upload Prescription</h2>
+
+                <form asp-controller="Customer" asp-action="UploadPrescription" method="post" enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="PrescriptionFile" class="form-label fw-bold">Prescription Image/PDF</label>
+                        <input asp-for="PrescriptionFile" type="file" class="form-control" />
+                        <span asp-validation-for="PrescriptionFile" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Notes" class="form-label fw-bold"></label>
+                        <textarea asp-for="Notes" class="form-control" style="height: 100px;"></textarea>
+                        <span asp-validation-for="Notes" class="text-danger"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 rounded-pill btn-lg">Submit Prescription</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

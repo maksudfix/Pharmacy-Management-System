@@ -33,11 +33,7 @@ namespace PharmacyManagement.Controllers
         public async Task<IActionResult> Checkout(int? medicineId, int? quantity)
         {
             var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                return Unauthorized();
-            }
-            if (user.CustomerId == null)
+            if (user == null || user.CustomerId == null)
             {
                 return Unauthorized();
             }
@@ -134,25 +130,74 @@ namespace PharmacyManagement.Controllers
                 return Unauthorized();
             }
 
-            if (ModelState.IsValid == true)
+            if (ModelState.IsValid == true && viewModel.CartItems != null && viewModel.CartItems.Any())
             {
-                decimal totalAmount = 0;
-                foreach (var item in viewModel.CartItems)
+                using var transaction = await _context.Database.BeginTransactionAsync();
+                try
                 {
-                    totalAmount += (item.UnitPrice * item.Quantity);
+                    decimal totalAmount = 0;
+                    foreach (var item in viewModel.CartItems)
+                    {
+                        totalAmount += (item.UnitPrice * item.Quantity);
+                    }
+
+                    Purchase purchase = new Purchase();
+                    purchase.CustomerId = user.CustomerId.Value;
+                    purchase.TotalAmount = totalAmount;
+                    purchase.PaymentMethod = viewModel.PaymentMethod;
+                    purchase.Status = "Pending";
+                    purchase.PurchaseDate = DateTime.Now;
+
+                    _context.Purchases.Add(purchase);
+                    await _context.SaveChangesAsync();
+
+                    foreach (var item in viewModel.CartItems)
+                    {
+                        var purchaseItem = new PurchaseItem
+                        {
+                            PurchaseId = purchase.PurchaseId,
+                            MedicineId = item.MedicineId,
+                            Quantity = item.Quantity,
+                            UnitPrice = item.UnitPrice
+                        };
+                        _context.PurchaseItems.Add(purchaseItem);
+
+                        var stocks = await _context.Stocks
+                            .Where(s => s.MedicineId == item.MedicineId && s.Quantity > 0)
+                            .OrderBy(s => s.CreatedAt)
+                            .ToListAsync();
+
+                        int remainingQtyToDeduct = item.Quantity;
+
+                        foreach (var stock in stocks)
+                        {
+                            if (remainingQtyToDeduct <= 0) break;
+
+                            if (stock.Quantity >= remainingQtyToDeduct)
+                            {
+                                stock.Quantity -= remainingQtyToDeduct;
+                                remainingQtyToDeduct = 0;
+                            }
+                            else
+                            {
+                                remainingQtyToDeduct -= stock.Quantity;
+                                stock.Quantity = 0;
+                            }
+
+                            _context.Stocks.Update(stock);
+                        }
+                    }
+
+                    await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+
+                    return RedirectToAction(nameof(MyPurchases));
                 }
-
-                Purchase purchase = new Purchase();
-                purchase.CustomerId = user.CustomerId.Value;
-                purchase.TotalAmount = totalAmount;
-                purchase.PaymentMethod = viewModel.PaymentMethod;
-                purchase.Status = "Pending";
-                purchase.PurchaseDate = DateTime.Now;
-
-                _context.Purchases.Add(purchase);
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction(nameof(MyPurchases));
+                catch (Exception)
+                {
+                    await transaction.RollbackAsync();
+                    ModelState.AddModelError("", "An error occurred while processing your checkout. Please try again.");
+                }
             }
 
             var rawPrescriptions = await _context.Prescriptions
@@ -284,7 +329,6 @@ namespace PharmacyManagement.Controllers
                     uniqueFileName = "/uploads/prescriptions/" + uniqueFileName;
                 }
 
-                // Automatically set status to "Done" upon upload as requested
                 Prescription prescription = new Prescription();
                 prescription.CustomerId = user.CustomerId.Value;
                 prescription.FileUrl = uniqueFileName;

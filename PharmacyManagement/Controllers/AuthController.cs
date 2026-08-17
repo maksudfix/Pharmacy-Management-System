@@ -24,7 +24,6 @@ namespace PharmacyManagement.Controllers
         [HttpGet]
         public async Task<IActionResult> Login(string? returnUrl = null)
         {
-            // Junior style: writing out explicit null and boolean checks manually
             if (User != null)
             {
                 if (User.Identity != null)
@@ -76,7 +75,6 @@ namespace PharmacyManagement.Controllers
                 return View(model);
             }
 
-            // Fixed null reference warning by passing UserName! (non-nullable assertion)
             var signInResult = await _signInManager.PasswordSignInAsync(
                 userToLogin.UserName!,
                 model.Password,
@@ -121,7 +119,6 @@ namespace PharmacyManagement.Controllers
                 return View(model);
             }
 
-            // 1. Create linked Customer profile first
             Customer newCustomer = new Customer();
             newCustomer.Name = model.Name;
             newCustomer.Age = model.Age;
@@ -134,7 +131,6 @@ namespace PharmacyManagement.Controllers
             _context.Customers.Add(newCustomer);
             await _context.SaveChangesAsync();
 
-            // 2. Create Identity ApplicationUser
             ApplicationUser newUser = new ApplicationUser();
             newUser.UserName = model.Email;
             newUser.Email = model.Email;
@@ -151,7 +147,6 @@ namespace PharmacyManagement.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
-            // Junior style: manual error rollback logic instead of DB Transactions
             _context.Customers.Remove(newCustomer);
             await _context.SaveChangesAsync();
 

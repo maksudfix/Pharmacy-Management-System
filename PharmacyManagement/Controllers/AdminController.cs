@@ -130,13 +130,42 @@ namespace PharmacyManagement.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteCustomer(int id)
         {
-            var customer = await _context.Customers.FindAsync(id);
+            var customer = await _context.Customers
+                .Include(c => c.Purchases)
+                .Include(c => c.Prescriptions)
+                .FirstOrDefaultAsync(c => c.CustomerId == id);
+
             if (customer != null)
             {
                 var user = await _context.Users.FirstOrDefaultAsync(u => u.CustomerId == id);
                 if (user != null)
                 {
                     _context.Users.Remove(user);
+                }
+
+                if (customer.Purchases != null && customer.Purchases.Any())
+                {
+                    var purchaseIds = customer.Purchases.Select(p => p.PurchaseId).ToList();
+                    var purchaseItems = _context.PurchaseItems.Where(pi => purchaseIds.Contains(pi.PurchaseId));
+                    _context.PurchaseItems.RemoveRange(purchaseItems);
+
+                    _context.Purchases.RemoveRange(customer.Purchases);
+                }
+
+                if (customer.Prescriptions != null && customer.Prescriptions.Any())
+                {
+                    foreach (var prescription in customer.Prescriptions)
+                    {
+                        if (!string.IsNullOrEmpty(prescription.FileUrl))
+                        {
+                            var filePath = Path.Combine(_webHostEnvironment.WebRootPath, prescription.FileUrl.TrimStart('/'));
+                            if (System.IO.File.Exists(filePath))
+                            {
+                                System.IO.File.Delete(filePath);
+                            }
+                        }
+                    }
+                    _context.Prescriptions.RemoveRange(customer.Prescriptions);
                 }
 
                 _context.Customers.Remove(customer);
@@ -212,7 +241,6 @@ namespace PharmacyManagement.Controllers
             }
         }
 
-        // MEDICINE MANAGEMENT
         [HttpGet]
         public async Task<IActionResult> Medicines()
         {
@@ -418,7 +446,6 @@ namespace PharmacyManagement.Controllers
             return RedirectToAction(nameof(Medicines));
         }
 
-        // STOCK MANAGEMENT
         [HttpGet]
         public async Task<IActionResult> Stocks()
         {
@@ -573,7 +600,6 @@ namespace PharmacyManagement.Controllers
             return RedirectToAction(nameof(Stocks));
         }
 
-        // PRESCRIPTION MANAGEMENT
         [HttpGet]
         public async Task<IActionResult> Prescriptions()
         {

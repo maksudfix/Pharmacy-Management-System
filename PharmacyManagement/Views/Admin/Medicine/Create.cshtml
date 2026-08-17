@@ -20,14 +20,14 @@
 
                 <!-- Generic Name -->
                 <div class="mb-3">
-                    <label asp-for="GenericName" class="form-label"></label>
+                    <label asp-for="GenericName" class="form-label">Generic Name</label>
                     <input asp-for="GenericName" class="form-control" />
                     <span asp-validation-for="GenericName" class="text-danger"></span>
                 </div>
 
                 <!-- Brand Name -->
                 <div class="mb-3">
-                    <label asp-for="BrandName" class="form-label"></label>
+                    <label asp-for="BrandName" class="form-label">Brand Name</label>
                     <input asp-for="BrandName" class="form-control" />
                     <span asp-validation-for="BrandName" class="text-danger"></span>
                 </div>
@@ -43,7 +43,7 @@
 
                 <!-- Dosage Form -->
                 <div class="mb-3">
-                    <label asp-for="DosageForm" class="form-label"></label>
+                    <label asp-for="DosageForm" class="form-label">Dosage Form</label>
                     <input asp-for="DosageForm" class="form-control" placeholder="e.g., Tablet, Syrup, Capsule" />
                     <span asp-validation-for="DosageForm" class="text-danger"></span>
                 </div>
@@ -64,7 +64,7 @@
 
                 <!-- Image File -->
                 <div class="mb-3">
-                    <label asp-for="ImageFile" class="form-label"></label>
+                    <label asp-for="ImageFile" class="form-label">Image File</label>
                     <input asp-for="ImageFile" type="file" class="form-control" />
                     <span asp-validation-for="ImageFile" class="text-danger"></span>
                 </div>
@@ -79,7 +79,7 @@
                 <!-- Is Prescription Required -->
                 <div class="mb-3 form-check">
                     <input asp-for="IsPrescriptionRequired" class="form-check-input" />
-                    <label asp-for="IsPrescriptionRequired" class="form-check-label"></label>
+                    <label asp-for="IsPrescriptionRequired" class="form-check-label" style="letter-spacing: 3px;">Is Prescription Required</label>
                 </div>
 
                 <button type="submit" class="btn btn-primary">Save</button>

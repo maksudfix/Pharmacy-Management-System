@@ -77,7 +77,7 @@
 ## Architecture
 
 Pharmacy Management System follows the **Model-View-Controller (MVC)** architectural pattern and uses ViewModels to separate user input from application entities.
-<img src="images/pharmacy-architecture.png" alt="Pharmacy Management System Architecture" width="800"><img width="1408" height="768" alt="image" src="https://github.com/user-attachments/assets/7f3318a2-5362-4adc-bf80-6e5d0bc33a80" />
+<img src="images/pharmacy-architecture.png" alt="Pharmacy Management System Architecture" width="500"><img width="1080" height="720" alt="image" src="https://github.com/user-attachments/assets/7f3318a2-5362-4adc-bf80-6e5d0bc33a80" />
 
 
 ### Architecture Overview

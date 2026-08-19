@@ -77,35 +77,8 @@
 ## Architecture
 
 Pharmacy Management System follows the **Model-View-Controller (MVC)** architectural pattern and uses ViewModels to separate user input from application entities.
+![Pharmacy Management System Dashboard](images/pharmacy-dashboard.png) <img width="1408" height="768" alt="Gemini_Generated_Image_6balia6balia6bal" src="https://github.com/user-attachments/assets/4a51e36c-303b-47d5-b949-2e3957316f25" />
 
-┌───────────────────────────────┐
-│         Razor Views           │
-│     UI & Layout Rendering     │
-└───────────────┬───────────────┘
-                │
-            ViewModels
-                ▼
-┌─────────────────────────────────────────┐
-│              Controllers                │
-│                                         │
-│ AdminController  AuthController         │
-│ CustomerController  HomeController      │
-└───────────────┬─────────────────────────┘
-                │
-        ┌───────┴────────┐
-        ▼                ▼
-┌─────────────────┐ ┌─────────────────────┐
-│ ASP.NET Identity│ │ Entity Framework    │
-│                 │ │ Core                │
-│ UserManager     │ │ AppDbContext        │
-│ RoleManager     │ │ Migrations          │
-└────────┬────────┘ └──────────┬──────────┘
-         │                     │
-         └──────────┬──────────┘
-                    ▼
-             ┌──────────────┐
-             │  SQL Server  │
-             └──────────────┘
 
 ### Architecture Overview
 

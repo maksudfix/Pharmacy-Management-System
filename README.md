@@ -97,7 +97,7 @@ Handles authentication, authorization, roles, password management, and account-r
 Provide the presentation layer using Razor, HTML, CSS, JavaScript, Bootstrap, and custom UI components.
 
 ## Project Structure
-<img src="images/pharmacy-architecture.png" alt="Pharmacy Management System Architecture" width="500"><img width="900" height="500" alt="image" <img width="1024" height="559" alt="image" src="https://github.com/user-attachments/assets/1a016d62-820f-4494-b96d-8e7f110214e9" />
+<img src="images/pharmacy-structure.png" alt="Pharmacy Management System Structure" width="500"><img width="900" height="500" alt="image" <img width="1024" height="559" alt="image" src="https://github.com/user-attachments/assets/1a016d62-820f-4494-b96d-8e7f110214e9" />
 
 ## Prerequisites
 

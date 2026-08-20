@@ -76,7 +76,7 @@
 
 ## Architecture
 
-Pharmacy Management System follows the **Model-View-Controller (MVC)** architectural pattern and uses ViewModels to separate user input from application entities.
+Pharmacy Management System follows the **Model-View-Controller (MVC)** architectural pattern.
 <img src="images/pharmacy-architecture.png" alt="Pharmacy Management System Architecture" width="500"><img width="900" height="500" alt="image" src="https://github.com/user-attachments/assets/7f3318a2-5362-4adc-bf80-6e5d0bc33a80" />
 
 
@@ -107,12 +107,11 @@ Make sure the following are installed:
 * SQL Server, SQL Server Express, or SQL Server LocalDB
 * Visual Studio 2026 or VS Code with the C# Dev Kit
 * Entity Framework Core CLI (`dotnet-ef`)
-
 > **Target Framework:** `.NET 10`
->
-> **ASP.NET Core Identity:** `10.0.0`
->
-> **Entity Framework Core:** `10.0.0`
+> **Install From Manage NutGet Packages:**
+  Microsoft.AspNetCore.Identity.EntityFrameworkCore Version="10.0.0" 
+  Microsoft.EntityFrameworkCore.SqlServer Version="10.0.0"
+  Microsoft.EntityFrameworkCore.Tools" Version="10.0.0"
 
 ## Getting Started
 
@@ -130,8 +129,6 @@ Update the connection string in `appsettings.json` according to your SQL Server 
   "ConnectionStrings": {
     "DefaultConnection": "Server=HP-TREX\\SQLEXPRESS; Database = pharmacy_db; Trusted_Connection = True; TrustServerCertificate = True;"
   }
-
-> For production environments, use environment variables, User Secrets, Azure Key Vault, or another secure configuration provider rather than committing sensitive connection information to source control.
 
 ### 3. Apply Entity Framework Migrations
 
